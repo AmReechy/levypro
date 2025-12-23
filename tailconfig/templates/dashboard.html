@@ -1,0 +1,4 @@
+<h2>Payment History</h2>
+{% for p in payments %}
+  <p>{{ p.levy }} - ₦{{ p.amount }} - {{ p.month }}</p>
+{% endfor %}
