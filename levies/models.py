@@ -9,3 +9,12 @@ class LevyType(models.Model):
 
     def __str__(self):
         return self.name
+
+levy_types = '''
+LevyType.objects.bulk_create([
+    LevyType(name="Property Levy", monthly_amount=10000),
+    LevyType(name="Restaurant Levy", monthly_amount=15000),
+    LevyType(name="Shop Levy", monthly_amount=5000),
+    LevyType(name="Commercial Car Levy", monthly_amount=3000),
+])
+'''

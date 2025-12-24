@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Payment Receipt{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow">
+
+    <div class="text-center mb-4">
+        <h2 class="text-xl font-semibold text-green-700">
+            AMAC Levy Payment Receipt
+        </h2>
+        <p class="text-sm text-gray-500">
+            Keep this receipt displayed on your property / vehicle
+        </p>
+    </div>
+
+    <div class="flex justify-center my-6">
+        <img
+            src="{{ receipt.qr_code.url }}"
+            alt="QR Code Receipt"
+            class="w-48 h-48 border"
+        >
+    </div>
+
+    <div class="text-sm space-y-2">
+        <p><strong>Payee Name:</strong> {{ receipt.payment.user.full_name }}</p>
+        <p><strong>ID Number:</strong> {{ receipt.payment.user.id_number }}</p>
+        <p><strong>Levy Type:</strong> {{ receipt.payment.levy.name }}</p>
+        <p><strong>Amount Paid:</strong> ₦{{ receipt.payment.amount }}</p>
+        <p><strong>Payment Month:</strong> {{ receipt.payment.month }}</p>
+        <p><strong>Reference:</strong> {{ receipt.payment.reference }}</p>
+        <p><strong>Date Paid:</strong> {{ receipt.payment.paid_at|date:"Y-m-d H:i" }}</p>
+    </div>
+
+    <div class="mt-6 flex justify-between">
+        <button
+            onclick="window.print()"
+            class="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800"
+        >
+            Print Receipt
+        </button>
+
+        <a
+            href="{% url 'dashboard' %}"
+            class="text-green-700 font-medium"
+        >
+            Back to Dashboard
+        </a>
+    </div>
+
+</div>
+{% endblock %}

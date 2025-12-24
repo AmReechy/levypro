@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     "monitoring",
     'tailwind',
     'tailconfig',
-
 ]
 
 TAILWIND_APP_NAME = 'tailconfig'

@@ -1,24 +1,33 @@
 {% load static tailwind_tags %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Django Tailwind</title>
     <meta charset="UTF-8">
+    <title>{% block title %}AMAC Revenue System{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet">
     {% tailwind_css %}
 </head>
+<body class="bg-gray-100 min-h-screen">
 
-<body class="bg-gray-50 text-black font-serif leading-normal tracking-normal">
+    <!-- Top bar -->
+    <nav class="bg-green-700 text-white px-6 py-4 flex justify-between items-center">
+        <h1 class="text-lg font-semibold">
+            AMAC Smart Revenue System
+        </h1>
+        {% if request.user.is_authenticated %}
+            <span class="text-sm">
+                {{ request.user.full_name }}
+            </span>
+        {% endif %}
+    </nav>
 
-<div class="container mx-auto">
-    <section class="flex items-center justify-center">
-        <h1 class="text-5xl">Django + Tailwind = ❤️</h1>
-    </section>
+    <!-- Page content -->
+    <main class="p-6">
+        {% block content %}{% endblock %}
+    </main>
 
-		<section>
-			<h2 class="text-center capitalize text-purple-600 text-3xl">It is working now</h2>
-		</section>
-</div>
 </body>
 </html>

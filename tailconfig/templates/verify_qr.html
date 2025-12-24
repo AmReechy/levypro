@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}QR Verification{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-6 rounded shadow">
+
+    <h2 class="text-xl font-semibold mb-4 text-center">
+        Levy Payment Verification
+    </h2>
+
+    <form method="post" class="space-y-4">
+        {% csrf_token %}
+        <input
+            type="text"
+            name="reference"
+            placeholder="Enter or scan reference code"
+            class="w-full border px-3 py-2 rounded"
+            required
+        >
+        <button
+            class="w-full bg-green-700 text-white py-2 rounded hover:bg-green-800"
+        >
+            Verify
+        </button>
+    </form>
+
+    {% if result %}
+        <div class="mt-6 text-center">
+            {% if result.status == "VALID" %}
+                <p class="text-green-700 font-semibold">
+                    ✔ Payment Verified
+                </p>
+                <p class="text-sm mt-2">
+                    {{ result.payment.user.full_name }}<br>
+                    {{ result.payment.levy.name }}<br>
+                    ₦{{ result.payment.amount }}
+                </p>
+            {% else %}
+                <p class="text-red-600 font-semibold">
+                    ✖ Invalid or Unpaid Levy
+                </p>
+            {% endif %}
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

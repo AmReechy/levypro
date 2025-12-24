@@ -1,4 +1,90 @@
-<h2>Payment History</h2>
-{% for p in payments %}
-  <p>{{ p.levy }} - ₦{{ p.amount }} - {{ p.month }}</p>
-{% endfor %}
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+
+    <!-- Biodata -->
+    <div class="bg-white p-6 rounded-lg shadow">
+        <h3 class="text-lg font-semibold mb-4">Payee Information</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <p><strong>Name:</strong> {{ request.user.full_name }}</p>
+            <p><strong>ID:</strong> {{ request.user.id_number }}</p>
+            <p><strong>Email:</strong> {{ request.user.email }}</p>
+            <p><strong>Phone:</strong> {{ request.user.phone_number }}</p>
+            <p><strong>Occupation:</strong> {{ request.user.occupation }}</p>
+            <p><strong>Address:</strong> {{ request.user.address }}</p>
+        </div>
+    </div>
+
+    <!-- Payment History -->
+    <div class="bg-white p-6 rounded-lg shadow">
+        <h3 class="text-lg font-semibold mb-4">Payment History</h3>
+
+        {% if payments %}
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm border">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="p-2 border">Levy Type</th>
+                        <th class="p-2 border">Amount</th>
+                        <th class="p-2 border">Month</th>
+                        <th class="p-2 border">Date Paid</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payment in payments %}
+                    <tr class="text-center">
+                        <td class="p-2 border">{{ payment.levy.name }}</td>
+                        <td class="p-2 border">₦{{ payment.amount }}</td>
+                        <td class="p-2 border">{{ payment.month }}</td>
+                        <td class="p-2 border">{{ payment.paid_at|date:"Y-m-d" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+            <p class="text-gray-500 text-sm">No payments recorded yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- Make Payment -->
+    <div class="bg-white p-6 rounded-lg shadow">
+        <h3 class="text-lg font-semibold mb-4">Make Levy Payment</h3>
+
+        <form method="post" action="{% url 'make_payment' %}" class="space-y-4">
+            {% csrf_token %}
+
+            <div>
+                <label class="block text-sm font-medium">Levy Type</label>
+                <select name="levy" class="w-full border rounded px-3 py-2">
+                    {% for levy in request.user.levy_types.all %}
+                        <option value="{{ levy.id }}">
+                            {{ levy.name }} – ₦{{ levy.monthly_amount }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium">Payment Method</label>
+                <select name="method" class="w-full border rounded px-3 py-2">
+                    <option value="CARD">Card</option>
+                    <option value="TRANSFER">Bank Transfer</option>
+                    <option value="USSD">USSD</option>
+                </select>
+            </div>
+
+            <button
+                type="submit"
+                class="bg-green-700 text-white px-6 py-2 rounded hover:bg-green-800 transition"
+            >
+                Confirm Payment
+            </button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

@@ -12,7 +12,7 @@ def register(request):
         user.save()
         form.save_m2m()
         return redirect("login")
-    return render(request, "accounts/register.html", {"form": form})
+    return render(request, "register.html", {"form": form})
 
 
 def login_view(request):
@@ -29,6 +29,7 @@ def login_view(request):
         )
         if user:
             login(request, user)
-            return redirect("dashboard")
+            #return redirect("dashboard")
+            return render(request, "dashboard.html")
 
-    return render(request, "accounts/login.html")
+    return render(request, "login.html")

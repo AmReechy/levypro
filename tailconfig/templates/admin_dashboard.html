@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="space-y-8">
+
+    <h2 class="text-2xl font-semibold">
+        Revenue Monitoring Dashboard
+    </h2>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded shadow">
+            <p>Total Payees</p>
+            <p class="text-2xl font-semibold">{{ total_payees }}</p>
+        </div>
+        <div class="bg-white p-4 rounded shadow">
+            <p>Total Revenue</p>
+            <p class="text-2xl font-semibold">₦{{ total_revenue }}</p>
+        </div>
+        <div class="bg-white p-4 rounded shadow">
+            <p>Payments This Month</p>
+            <p class="text-2xl font-semibold">{{ monthly_payments }}</p>
+        </div>
+        <div class="bg-white p-4 rounded shadow">
+            <p>Compliance Rate</p>
+            <p class="text-2xl font-semibold">{{ compliance_rate }}%</p>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <div class="bg-white p-6 rounded shadow">
+            <h3 class="font-semibold mb-2">Payments by Levy</h3>
+            <canvas id="levyChart"></canvas>
+        </div>
+
+        <div class="bg-white p-6 rounded shadow">
+            <h3 class="font-semibold mb-2">Monthly Revenue Trend</h3>
+            <canvas id="monthlyChart"></canvas>
+        </div>
+
+    </div>
+</div>
+
+<script>
+const levyData = {
+    labels: [{% for l in levy_breakdown %}"{{ l.levy__name }}",{% endfor %}],
+    datasets: [{
+        label: "Total Amount (₦)",
+        data: [{% for l in levy_breakdown %}{{ l.amount }},{% endfor %}],
+        backgroundColor: "rgba(34,197,94,0.7)"
+    }]
+};
+
+new Chart(document.getElementById("levyChart"), {
+    type: "bar",
+    data: levyData
+});
+
+const monthlyData = {
+    labels: [{% for m in monthly_trend %}"{{ m.month }}",{% endfor %}],
+    datasets: [{
+        label: "Revenue (₦)",
+        data: [{% for m in monthly_trend %}{{ m.amount }},{% endfor %}],
+        borderColor: "rgba(34,197,94,1)",
+        fill: false
+    }]
+};
+
+new Chart(document.getElementById("monthlyChart"), {
+    type: "line",
+    data: monthlyData
+});
+</script>
+
+{% endblock %}
