@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 import os
+import platform
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -50,7 +51,12 @@ INSTALLED_APPS = [
 ]
 
 TAILWIND_APP_NAME = 'tailconfig'
-NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
+
+SYSTEM_NAME = platform.system()
+if SYSTEM_NAME == "Linux" and "ANDROID_ROOT" in os.environ:
+    pass
+else:
+    NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
