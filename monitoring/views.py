@@ -5,6 +5,7 @@ from django.shortcuts import render
 
 from accounts.models import Payee
 from payments.models import Payment
+from django.contrib import messages
 
 @staff_member_required
 def admin_dashboard(request):
@@ -59,4 +60,4 @@ def admin_dashboard(request):
         "monthly_trend": monthly_trend,
     }
 
-    return render(request, "monitoring/admin_dashboard.html", context)
+    return render(request, "admin_dashboard.html", context)

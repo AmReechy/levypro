@@ -5,6 +5,8 @@ from django.db import models
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 
+from levies.models import LevyType
+
 class PayeeManager(BaseUserManager):
     def create_user(self, id_number, phone_number, password=None, **extra):
         if not id_number or not phone_number:
@@ -33,16 +35,17 @@ class Payee(AbstractBaseUser, PermissionsMixin):
         ("PHONE", "Phone Number"),
     ]
 
-    id_type = models.CharField(max_length=10, choices=ID_TYPES)
-    id_number = models.CharField(max_length=50, unique=True, default='123456789')
-    phone_number = models.CharField(max_length=15, default='123456789')
-    email = models.EmailField(unique=True, default='user@example.com')
+    id_type = models.CharField(max_length=10, choices=ID_TYPES, null=True)
+    id_number = models.CharField(max_length=50, unique=True, null=True)
+    phone_number = models.CharField(max_length=15 , null=True)
+    email = models.EmailField(unique=True, null=True)
 
-    full_name = models.CharField(max_length=200, default='John Doe')
+    full_name = models.CharField(max_length=200, null=True)
     date_of_birth = models.DateField(null=True)
-    address = models.TextField()
-    occupation = models.CharField(max_length=100, default="Worker")
-    passport_photo = models.ImageField(upload_to="passports/")
+    address = models.TextField(blank=True, null=True)
+    occupation = models.CharField(max_length=100, null=True, blank=True)
+    levy_types = models.ManyToManyField(LevyType, blank=False)
+    passport_photo = models.ImageField(upload_to="passports/", blank=True)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -54,3 +57,13 @@ class Payee(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.full_name
+
+'''while False:
+    try:
+        n=int(input("How many users do you want to create ?"))
+        if n and n > 0:
+            break
+    except:
+        print("Invalid input! Please try again.")
+'''
+

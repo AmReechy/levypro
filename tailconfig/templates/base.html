@@ -9,11 +9,18 @@
 
     <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet">
     {% tailwind_css %}
+		<style type="text/css" media="screen">
+			.form-input { @apply border rounded px-3 py-2; }
+.form-select { @apply border rounded px-3 py-2 bg-white; }
+.form-textarea { @apply border rounded px-3 py-2; }
+.form-checkbox { @apply text-green-600; }
+
+		</style>
 </head>
 <body class="bg-gray-100 min-h-screen">
 
     <!-- Top bar -->
-    <nav class="bg-green-700 text-white px-6 py-4 flex justify-between items-center">
+    <nav class="sticky top-0 bg-green-700 text-white px-6 py-4 flex justify-between items-center">
         <h1 class="text-lg font-semibold">
             AMAC Smart Revenue System
         </h1>
@@ -24,8 +31,14 @@
         {% endif %}
     </nav>
 
+
     <!-- Page content -->
-    <main class="p-6">
+    <main class="py-12 px-6 md:px-12">
+		{% if messages %}
+				{% for message in messages %}
+					<div class="{{ message.tags }} max-w-2xl mx-auto p-6 rounded-lg shadow font-medium mb-4">{{ message }}</div>
+				{% endfor %}
+		{% endif %}
         {% block content %}{% endblock %}
     </main>
 

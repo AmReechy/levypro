@@ -5,8 +5,29 @@
 <div class="space-y-8">
 
     <!-- Biodata -->
-    <div class="bg-white p-6 rounded-lg shadow">
+    <div class="bg-white p-3 rounded-lg shadow">
+			<div class="flex justify-evenly">
+			<form action="{% url 'logout' %}" method="post" class="inline-block text-sm font-medium">
+        {% csrf_token %}
+				<button type="submot" class="text-red-600 underline underline-offset-2">Logout</button>
+				<!--<button type="submit">Log Out</button>-->
+    </form>
+			{% if request.user.is_staff %}
+				<span><a href="{% url 'admin_dashboard' %}" class="underline underline-offset-2 text-sm font-medium text-green-700">View Monitoring Dashboard</a></span>
+			{% endif %}
+			</div>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow ">
         <h3 class="text-lg font-semibold mb-4">Payee Information</h3>
+		{% if request.user.passport_photo %}
+    <div class="flex justify-center my-6">
+        <img
+            src="{{ request.user.passport_photo.url }}"
+            alt="Payee Passport"
+            class="w-56 h-56 border md:w-64 md:h-64 inline-block rounded-full"
+        >
+    </div>
+		{% endif %}
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <p><strong>Name:</strong> {{ request.user.full_name }}</p>
@@ -19,7 +40,7 @@
     </div>
 
     <!-- Payment History -->
-    <div class="bg-white p-6 rounded-lg shadow">
+    <div class="bg-white p-6 rounded-lg shadow overflow-x-auto">
         <h3 class="text-lg font-semibold mb-4">Payment History</h3>
 
         {% if payments %}
@@ -30,16 +51,24 @@
                         <th class="p-2 border">Levy Type</th>
                         <th class="p-2 border">Amount</th>
                         <th class="p-2 border">Month</th>
-                        <th class="p-2 border">Date Paid</th>
+                        <th class="p-2 border text-nowrap">Date Paid</th>
+                        <th class="p-2 border text-nowrap">Status</th>
+                        <th class="p-2 border text-nowrap">QR Receipt</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for payment in payments %}
                     <tr class="text-center">
-                        <td class="p-2 border">{{ payment.levy.name }}</td>
+                        <td class="p-2 border font-medium">{{ payment.levy.name }}</td>
                         <td class="p-2 border">₦{{ payment.amount }}</td>
-                        <td class="p-2 border">{{ payment.month }}</td>
-                        <td class="p-2 border">{{ payment.paid_at|date:"Y-m-d" }}</td>
+                        <td class="p-2 border">{{ payment.month | date:"F Y" }}</td>
+                        <td class="p-2 border text-nowrap">{{ payment.paid_at|date:"Y-m-d" }}</td>
+                        <td class="p-2 border text-nowrap">
+													<span class="px-2 py-1 text-xs rounded bg-green-100 text-green-700">
+														Paid
+													</span>
+												</td>
+											 <td class="p-2 border"><a href="{% url 'view_receipt' payment.receipt.id %}" class="underline underline-offset-2 text-nowrap text-blue-500">View receipt</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -50,21 +79,126 @@
         {% endif %}
     </div>
 
+		<!-- Outstanding Levies -->
+		<div class="bg-white rounded-lg shadow p-6 mb-8">
+				<h2 class="text-lg font-semibold text-gray-800 mb-4">
+						Outstanding Levies
+				</h2>
+
+				{% if outstanding_levies %}
+						<div class="overflow-x-auto">
+								<table class="min-w-full text-sm">
+										<thead>
+												<tr class="bg-gray-100 text-left">
+														<th class="px-4 py-2">Levy Type</th>
+														<th class="px-4 py-2">Month</th>
+														<th class="px-4 py-2">Amount (₦)</th>
+														<th class="px-4 py-2">Status</th>
+												</tr>
+										</thead>
+										<tbody>
+												{% for item in outstanding_levies %}
+														<tr class="border-b">
+																<td class="px-4 py-2 font-medium">
+																		{{ item.levy_name }}
+																</td>
+																<td class="px-4 py-2">
+																		{{ item.month|date:"F Y" }}
+																</td>
+																<td class="px-4 py-2">
+																		₦{{ item.amount|floatformat:2 }}
+																</td>
+																<td class="px-4 py-2">
+																		<span class="px-2 py-1 text-xs rounded bg-red-100 text-red-700">
+																				Unpaid
+																		</span>
+																</td>
+														</tr>
+												{% endfor %}
+										</tbody>
+								</table>
+						</div>
+				{% else %}
+						<p class="text-green-600 text-sm">
+								🎉 You have no outstanding levy payments.
+						</p>
+				{% endif %}
+		</div>
+
+		<!-- Make Payment -->
+		<div class="bg-white rounded-lg shadow p-6">
+				<h2 class="text-lg font-semibold text-gray-800 mb-4">
+						Make Levy Payment
+				</h2>
+
+				{% if has_outstanding %}
+						<form method="post" action="{% url 'make_payment' %}">
+								{% csrf_token %}
+
+								<!-- Outstanding Month Selection -->
+								<div class="mb-4">
+										<label class="block text-sm font-medium mb-1">
+												Select Outstanding Levy (Month)
+										</label>
+										<select name="outstanding_id"
+														required
+														class="w-full px-3 py-2 border rounded focus:ring focus:ring-blue-200">
+												<option value="">-- Select levy/month to pay --</option>
+
+												{% for item in outstanding_levies %}
+												<option value="{{item.month.year}}|{{ item.month.month }}|{{ item.levy_name }}">
+																{{ item.levy_name }} – {{ item.month|date:"F Y" }}
+																(₦{{ item.amount|floatformat:2 }})
+														</option>
+												{% endfor %}
+										</select>
+								</div>
+
+								<!-- Payment Method -->
+								<div class="mb-4">
+										<label class="block text-sm font-medium mb-1">
+												Payment Method
+										</label>
+										<select name="method"
+														required
+														class="w-full px-3 py-2 border rounded">
+												<option value="CARD">Card</option>
+												<option value="TRANSFER">Transfer</option>
+												<option value="USSD">USSD</option>
+										</select>
+								</div>
+
+								<!-- Submit -->
+								<button type="submit"
+												class="w-full bg-green-700 hover:bg-green-800 text-white py-2 rounded">
+										Confirm Payment
+								</button>
+						</form>
+				{% else %}
+						<button disabled
+										class="w-full bg-gray-400 text-white py-2 rounded cursor-not-allowed">
+								No Outstanding Levy to Pay
+						</button>
+				{% endif %}
+		</div>
+
+
+
     <!-- Make Payment -->
-    <div class="bg-white p-6 rounded-lg shadow">
+    <!--<div class="bg-white p-6 rounded-lg shadow">
         <h3 class="text-lg font-semibold mb-4">Make Levy Payment</h3>
 
-        <form method="post" action="{% url 'make_payment' %}" class="space-y-4">
-            {% csrf_token %}
+        <form method="post" action="% url 'make_payment' %" class="space-y-4">
+            % csrf_token %
 
             <div>
                 <label class="block text-sm font-medium">Levy Type</label>
                 <select name="levy" class="w-full border rounded px-3 py-2">
-                    {% for levy in request.user.levy_types.all %}
-                        <option value="{{ levy.id }}">
-                            {{ levy.name }} – ₦{{ levy.monthly_amount }}
+                    % for levy in request.user.levy_types.all %
+                        <option value="{ levy.id }">
+                            { levy.name } – ₦{ levy.monthly_amount }
                         </option>
-                    {% endfor %}
+                    % endfor %
                 </select>
             </div>
 
@@ -84,7 +218,7 @@
                 Confirm Payment
             </button>
         </form>
-    </div>
+		</div>-->
 
 </div>
 {% endblock %}

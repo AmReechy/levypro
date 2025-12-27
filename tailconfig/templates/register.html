@@ -11,14 +11,38 @@
     <form method="post" enctype="multipart/form-data" class="space-y-5">
         {% csrf_token %}
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {{ form.full_name.label_tag }} {{ form.full_name }}
+				{% if form.errors %}
+					<div class="bg-red-100 my-4 p-4 rounded-md">
+							<strong class="text-red-700 text-base mb-4">Please correct the following errors:</strong>
+							<ul class="text-sm">
+							{% for field in form %}
+									{% for error in field.errors %}
+									<li class="mb-1.5"><span class="font-semibold text-red-800">{{ field.label }}: </span>{{ error }}</li>
+									{% endfor %}
+							{% endfor %}
+							</ul>
+							<!-- Also show non-field errors in this list -->
+							<div class="text-sm font-medium">
+							{{ form.non_field_errors }}
+							</div>
+					</div>
+			{% endif %}
+
+
+        <div class="rid grid-cols-1 md:grid-cols-2 gap-4">
+            <!--{{ form.full_name.label_tag }} {{ form.full_name }}
             {{ form.email.label_tag }} {{ form.email }}
             {{ form.phone_number.label_tag }} {{ form.phone_number }}
-            {{ form.date_of_birth.label_tag }} {{ form.date_of_birth }}
+						{{ form.date_of_birth.label_tag }} {{ form.date_of_birth }}-->
+						{% for field in form %}
+						<div class="grid grid-cols-1 md:grid-cols-2 gap-1 md:gap-2 mb-4">
+							<p class="font-medium text-base md:text-base">{{field.label}}</p>
+							<p>{{field}}</p>
+						</div>
+						{% endfor %}
         </div>
 
-        <div>
+        <!--<div>
             {{ form.address.label_tag }}
             {{ form.address }}
         </div>
@@ -48,7 +72,7 @@
         <div>
             <label class="block text-sm font-medium">Password</label>
             {{ form.password }}
-        </div>
+				</div>-->
 
         <button
             type="submit"
@@ -58,5 +82,11 @@
         </button>
     </form>
 
+    <p class="text-center text-sm mt-4">
+        Already have an account?
+        <a href="{% url 'login' %}" class="text-green-700 font-medium">
+            Login here
+        </a>
+    </p>
 </div>
 {% endblock %}

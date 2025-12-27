@@ -1,0 +1,1 @@
+vim -p accounts/views.py levies/views.py monitoring/views.py payments/views.py

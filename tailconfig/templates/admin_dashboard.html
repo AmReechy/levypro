@@ -62,7 +62,7 @@ new Chart(document.getElementById("levyChart"), {
 });
 
 const monthlyData = {
-    labels: [{% for m in monthly_trend %}"{{ m.month }}",{% endfor %}],
+    labels: [{% for m in monthly_trend %}"{{ m.month|date:'N Y' }}",{% endfor %}],
     datasets: [{
         label: "Revenue (₦)",
         data: [{% for m in monthly_trend %}{{ m.amount }},{% endfor %}],

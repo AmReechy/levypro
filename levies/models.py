@@ -10,11 +10,10 @@ class LevyType(models.Model):
     def __str__(self):
         return self.name
 
-levy_types = '''
-LevyType.objects.bulk_create([
-    LevyType(name="Property Levy", monthly_amount=10000),
-    LevyType(name="Restaurant Levy", monthly_amount=15000),
-    LevyType(name="Shop Levy", monthly_amount=5000),
-    LevyType(name="Commercial Car Levy", monthly_amount=3000),
-])
+create_levy_types = '''
+lts = [("Property Levy", 10000), ("Restaurant Levy", 15000), ("Shop Levy", 5000), ("Commercial Car Levy", 3000)]
+for l in lts:
+    name = l[0]
+    amount= l[1]
+    LevyType.objects.create(name=name, monthly_amount=amount)
 '''
