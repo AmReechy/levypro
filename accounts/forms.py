@@ -36,9 +36,10 @@ class PayeeRegistrationForm(forms.ModelForm):
             "full_name",
             "id_type",
             "id_number",
+            "location",
             "phone_number",
             "email",
-            "date_of_birth",
+            #"date_of_birth",
             "address",
             "occupation",
             "passport_photo",
@@ -65,6 +66,12 @@ class PayeeRegistrationForm(forms.ModelForm):
                 }
             ),
 
+            "location": forms.Select(
+                attrs={
+                    "class": "form-select w-full"
+                }
+            ),
+
             "phone_number": forms.TextInput(
                 attrs={
                     "class": "form-input w-full",
@@ -79,12 +86,12 @@ class PayeeRegistrationForm(forms.ModelForm):
                 }
             ),
 
-            "date_of_birth": forms.DateInput(
-                attrs={
-                    "class": "form-input w-full",
-                    "type": "date"
-                }
-            ),
+            #"date_of_birth": forms.DateInput(
+            #   attrs={
+            #       "class": "form-input w-full",
+            #        "type": "date"
+            #    }
+            #),
 
             "address": forms.Textarea(
                 attrs={
