@@ -16,7 +16,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         MONTHS_BACK = 12
-        COMPLIANCE_RATE = 0.8  # 80% chance a payee pays in a given month
+        COMPLIANCE_RATE = 0.7  # 80% chance a payee pays in a given month
 
         payment_methods = ["CARD", "TRANSFER", "USSD"]
 
@@ -58,7 +58,7 @@ class Command(BaseCommand):
                         month=month,
                         verified=random.choices(
                             [True, False],
-                            weights=[0.90, 0.10],
+                            weights=[0.80, 0.20],
                             k=1
                         )[0]
                     )

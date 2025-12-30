@@ -6,6 +6,7 @@
 
     <!-- Biodata -->
     <div class="bg-white p-3 rounded-lg shadow">
+      <h3 class="text-xl font-semibold mb-2 text-center">My Dashboard {% if request.user.is_staff %}(<span class="font-medium text-green-700 italic">Staff Account</span>){% endif %}</h3>
 			<div class="flex justify-evenly">
 			<form action="{% url 'logout' %}" method="post" class="inline-block text-sm font-medium">
         {% csrf_token %}
@@ -13,12 +14,13 @@
 				<!--<button type="submit">Log Out</button>-->
     </form>
 			{% if request.user.is_staff %}
-				<span><a href="{% url 'admin_dashboard' %}" class="underline underline-offset-2 text-sm font-medium text-green-700">View Monitoring Dashboard</a></span>
+				<span><a href="{% url 'admin_dashboard' %}" class="underline underline-offset-2 text-sm font-medium text-green-700">Monitoring Dashboard</a></span>
+				<span><a href="{% url 'payee_info' %}" class="underline underline-offset-2 text-sm font-medium text-green-700">Payee Info</a></span>
 			{% endif %}
 			</div>
     </div>
     <div class="bg-white p-6 rounded-lg shadow ">
-        <h3 class="text-lg font-semibold mb-4">Payee Information</h3>
+        <h3 class="text-lg font-semibold mb-4">My Information</h3>
 		{% if request.user.passport_photo %}
     <div class="flex justify-center my-6">
         <img
@@ -34,14 +36,19 @@
             <p><strong>ID:</strong> {{ request.user.id_number }}</p>
             <p><strong>Email:</strong> {{ request.user.email }}</p>
             <p><strong>Phone:</strong> {{ request.user.phone_number }}</p>
+            <p><strong>Location:</strong> {{ request.user.location }}</p>
             <p><strong>Occupation:</strong> {{ request.user.occupation }}</p>
             <p><strong>Address:</strong> {{ request.user.address }}</p>
+            <p><strong>Applicable Levies:</strong>
+						{% for l in request.user.levy_types.all %}
+						<span class="">{{l.name}}</span> {% if not forloop.last %}<span class="inline-block px-2 text-red-500">|</span>{% endif %}
+						{% endfor %}</p>
         </div>
     </div>
 
     <!-- Payment History -->
     <div class="bg-white p-6 rounded-lg shadow overflow-x-auto">
-        <h3 class="text-lg font-semibold mb-4">Payment History</h3>
+        <h3 class="text-lg font-semibold mb-4">My Payment History</h3>
 
         {% if payments %}
         <div class="overflow-x-auto">
@@ -82,7 +89,7 @@
 		<!-- Outstanding Levies -->
 		<div class="bg-white rounded-lg shadow p-6 mb-8">
 				<h2 class="text-lg font-semibold text-gray-800 mb-4">
-						Outstanding Levies
+						My Outstanding Levies
 				</h2>
 
 				{% if outstanding_levies %}
@@ -182,43 +189,6 @@
 				{% endif %}
 		</div>
 
-
-
-    <!-- Make Payment -->
-    <!--<div class="bg-white p-6 rounded-lg shadow">
-        <h3 class="text-lg font-semibold mb-4">Make Levy Payment</h3>
-
-        <form method="post" action="% url 'make_payment' %" class="space-y-4">
-            % csrf_token %
-
-            <div>
-                <label class="block text-sm font-medium">Levy Type</label>
-                <select name="levy" class="w-full border rounded px-3 py-2">
-                    % for levy in request.user.levy_types.all %
-                        <option value="{ levy.id }">
-                            { levy.name } – ₦{ levy.monthly_amount }
-                        </option>
-                    % endfor %
-                </select>
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium">Payment Method</label>
-                <select name="method" class="w-full border rounded px-3 py-2">
-                    <option value="CARD">Card</option>
-                    <option value="TRANSFER">Bank Transfer</option>
-                    <option value="USSD">USSD</option>
-                </select>
-            </div>
-
-            <button
-                type="submit"
-                class="bg-green-700 text-white px-6 py-2 rounded hover:bg-green-800 transition"
-            >
-                Confirm Payment
-            </button>
-        </form>
-		</div>-->
 
 </div>
 {% endblock %}

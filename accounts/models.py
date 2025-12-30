@@ -84,3 +84,15 @@ for model in apps.get_models():
                 print(model.__name__, field.name, field.remote_field.on_delete)
 
 """
+
+delete_all = """
+from accounts.models import Payee
+from payments.models import Payment
+from payments.receipt import Receipt
+rs = Receipt.objects.all()
+print(rs.delete())
+ps = Payment.objects.all()
+print(ps.delete())
+payees = Payee.objects.all()
+print(payees.delete())
+"""

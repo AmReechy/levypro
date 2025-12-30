@@ -40,7 +40,7 @@ class Command(BaseCommand):
 
         created_count = 0
 
-        for i in range(START_NUM, START_NUM +  TOTAL_PAYEES + 1):
+        for i in range(START_NUM, START_NUM +  TOTAL_PAYEES):
             id_number = str(i).zfill(5)   # 00001 → 00100
             phone_number = id_number
             email = f"payee{id_number}@example.com"
@@ -55,9 +55,12 @@ class Command(BaseCommand):
                 password=PASSWORD,
                 id_type=random.choice(["NIN", "TIN", "BVN", "PHONE"]),
                 full_name=fake.name(),
-                date_of_birth=fake.date_of_birth(
-                    minimum_age=18, maximum_age=70
-                ),
+                #date_of_birth=fake.date_of_birth(
+                #minimum_age=18, maximum_age=70
+                #),
+                location=random.choices(
+                    population=["Wuse", "Garki", "Maitama", "Gwarinpa", "Nyanya", "Asokoro", "Utako", "Karu"],
+                    weights=[0.25,0.15,0.35,0.05,0.05,0.05,0.5,0.5])[0],
                 address=fake.address(),
                 occupation=fake.job(),
                 is_active=True,

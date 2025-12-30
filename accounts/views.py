@@ -3,7 +3,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from .forms import PayeeRegistrationForm
+from .models import Payee
 from payments.models import Payment
 from datetime import date
 from dateutil.relativedelta import relativedelta
@@ -112,3 +114,31 @@ def dashboard(request):
     }
     return render(request, "dashboard.html", context)
 
+
+@staff_member_required
+def view_payee_info(request):
+    payee_id = request.GET.get("id_number","")
+    try:
+        payee = Payee.objects.get(id_number=payee_id)
+    except:
+        if payee_id:
+            messages.error(
+                request,
+                f"No payee found with ID number '{payee_id}'."
+            )
+        payee = None
+    if payee:
+        outstanding_levies = compute_outstanding_levies(payee)
+        payments = Payment.objects.filter(user=payee)
+    else:
+        outstanding_levies = []
+        payments = []
+    context = {
+        "outstanding_levies": outstanding_levies,
+        "has_outstanding": bool(outstanding_levies),
+        'payments':payments,
+        "payee": payee,
+        "searched_id": payee_id,
+        # other context values you already have
+    }
+    return render(request, "payee_info.html", context)

@@ -4,7 +4,7 @@ from django.core.files import File
 from django.db import models
 
 class Receipt(models.Model):
-    payment = models.OneToOneField("Payment", on_delete=models.CASCADE, related_name="receipt")
+    payment = models.OneToOneField("Payment", on_delete=models.CASCADE)
     qr_code = models.ImageField(upload_to="qr_receipts/")
     created = models.DateTimeField(auto_now_add=True)
 
