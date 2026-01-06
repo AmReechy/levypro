@@ -11,7 +11,7 @@ from django.contrib import messages
 @staff_member_required
 def admin_dashboard(request):
     current_month = now().month
-    current_year = now().year
+    current_year = 2025 #now().year
 
     total_payees = Payee.objects.count()
     total_revenue = Payment.objects.filter(month__year= current_year).aggregate(
@@ -83,7 +83,7 @@ def admin_dashboard(request):
         .order_by("month")
     )
 
-    print(monthly_trend)
+    #print(monthly_trend)
 
     context = {
         "total_payees": total_payees,
